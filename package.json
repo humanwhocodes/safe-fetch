@@ -1,7 +1,7 @@
 {
-  "name": "@humanwhocodes/replace-me",
+  "name": "@humanwhocodes/safe-fetch",
   "version": "0.0.0",
-  "description": "Replace me",
+  "description": "A fetch wrapper that returns Response objects for errors instead of rejecting",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -49,9 +49,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/humanwhocodes/replace-me.git"
+    "url": "git+https://github.com/humanwhocodes/safe-fetch.git"
   },
-  "keywords": [],
+  "keywords": [
+    "fetch",
+    "safe",
+    "error-handling",
+    "promise"
+  ],
   "author": "Nicholas C. Zaks",
   "license": "Apache-2.0",
   "devDependencies": {
