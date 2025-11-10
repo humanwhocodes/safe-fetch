@@ -1,5 +1,5 @@
 ---
-applyTo: '**/*.js,**/*.ts'
+applyTo: "**/*.js,**/*.ts"
 ---
 
 # JavaScript/TypeScript Coding Style Guide
@@ -14,7 +14,7 @@ Use double quotes for strings. Example:
 
 ```typescript
 // Incorrect
-const message = 'Hello, world!';
+const message = "Hello, world!";
 
 // Correct
 const message = "Hello, world!";
@@ -30,9 +30,9 @@ if (condition) return;
 
 // Correct
 if (condition) {
-  // do something
+	// do something
 } else {
-  // do something else
+	// do something else
 }
 ```
 
@@ -42,7 +42,7 @@ Always include one blank line before and after a conditional statement. Example:
 // Incorrect
 doSomething();
 if (condition) {
-  // do something
+	// do something
 }
 callFunction();
 
@@ -50,7 +50,7 @@ callFunction();
 doSomething();
 
 if (condition) {
-  // do something
+	// do something
 }
 
 callFunction();

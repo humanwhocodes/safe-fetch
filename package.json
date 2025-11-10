@@ -51,9 +51,7 @@
     "type": "git",
     "url": "git+https://github.com/humanwhocodes/replace-me.git"
   },
-  "keywords": [
-
-  ],
+  "keywords": [],
   "author": "Nicholas C. Zaks",
   "license": "Apache-2.0",
   "devDependencies": {
@@ -68,6 +66,5 @@
     "typescript": "^5.6.3",
     "yorkie": "2.0.0"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

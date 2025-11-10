@@ -11,6 +11,7 @@ export default [
 				process: false,
 				URL: false,
 				console: false,
+				Response: false,
 			},
 		},
 	},
