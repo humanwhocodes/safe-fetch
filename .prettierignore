@@ -2,3 +2,4 @@ dist
 CHANGELOG.md
 jsr.json
 .prettierignore
+.github/instructions/javascript.instructions.md
