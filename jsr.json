@@ -1,0 +1,13 @@
+{
+  "name": "@humanwhocodes/replace-me",
+  "version": "0.0.0",
+  "exports": "./dist/index.js",
+  "publish": {
+    "include": [
+      "jsr.json",
+      "LICENSE",
+      "README.md",
+      "dist"
+    ]
+  }
+}
