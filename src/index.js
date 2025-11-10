@@ -14,9 +14,11 @@ export function createSafeFetch(fetch) {
 	return (url, init) => {
 		return fetch(url, init).catch(error => {
 			// Create a custom Response-like object since status 10001 is out of valid range
+			const statusText =
+				typeof error === "string" ? error : error.message;
 			const response = new Response(null, {
 				status: 599,
-				statusText: /** @type {Error} */ (error).message,
+				statusText,
 			});
 
 			// Override the status property with a custom value

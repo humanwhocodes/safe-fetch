@@ -33,6 +33,7 @@ const response = await safeFetch("https://api.example.com/data", {
 	signal: controller.signal,
 });
 
+// the error code 10001 indicates it's a caught error
 if (response.status === 10001) {
 	console.error("Error:", response.statusText);
 	// "This operation was aborted"
@@ -67,7 +68,7 @@ if (response.status === 10001) {
 
 ## How It Works
 
-The Response constructor in JavaScript only accepts status codes in the range 200-599. To work around this limitation, `safe-fetch` creates a Response object with status 599 and then uses `Object.defineProperty()` to override the status property with 10001.
+The `Response` constructor in JavaScript only accepts status codes in the range 200-599. To work around this limitation, `safe-fetch` creates a `Response` object with status 599 and then uses `Object.defineProperty()` to override the status property with 10001.
 
 When a fetch operation fails (network error, abort signal, etc.), instead of rejecting the promise, `safe-fetch` catches the error and returns a Response object with:
 

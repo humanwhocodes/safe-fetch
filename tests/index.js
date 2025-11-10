@@ -92,6 +92,18 @@ describe("createSafeFetch", () => {
 		assert.strictEqual(response.status, 10001);
 		assert.strictEqual(response.statusText, errorMessage);
 	});
+
+	it("should handle string errors", async () => {
+		const errorMessage = "String error message";
+		const mockFetch = async () => {
+			throw errorMessage;
+		};
+		const safe = createSafeFetch(mockFetch);
+		const response = await safe("https://example.com");
+
+		assert.strictEqual(response.status, 10001);
+		assert.strictEqual(response.statusText, errorMessage);
+	});
 });
 
 describe("safeFetch", () => {
