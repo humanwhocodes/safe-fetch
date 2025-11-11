@@ -1,6 +1,6 @@
 {
   "name": "@humanwhocodes/safe-fetch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A fetch wrapper that returns Response objects for errors instead of rejecting",
   "type": "module",
   "main": "dist/index.js",
