@@ -8,11 +8,21 @@
 //-----------------------------------------------------------------------------
 
 import assert from "node:assert";
-import { createSafeFetch, safeFetch } from "../dist/index.js";
+import { createSafeFetch, safeFetch, ERROR_STATUS } from "../dist/index.js";
 
 //-----------------------------------------------------------------------------
 // Tests
 //-----------------------------------------------------------------------------
+
+describe("ERROR_STATUS", () => {
+	it("should be exported as a constant", () => {
+		assert.strictEqual(typeof ERROR_STATUS, "number");
+	});
+
+	it("should have the value 10001", () => {
+		assert.strictEqual(ERROR_STATUS, 10001);
+	});
+});
 
 describe("createSafeFetch", () => {
 	it("should return a function", () => {
@@ -47,6 +57,18 @@ describe("createSafeFetch", () => {
 		assert.strictEqual(response.status, 10001);
 		assert.strictEqual(response.statusText, errorMessage);
 		assert.ok(response instanceof Response);
+	});
+
+	it("should return Response with status equal to ERROR_STATUS when fetch throws an error", async () => {
+		const errorMessage = "Network error occurred";
+		const mockFetch = async () => {
+			throw new Error(errorMessage);
+		};
+		const safe = createSafeFetch(mockFetch);
+		const response = await safe("https://example.com");
+
+		assert.strictEqual(response.status, ERROR_STATUS);
+		assert.strictEqual(response.statusText, errorMessage);
 	});
 
 	it("should handle AbortError correctly", async () => {
