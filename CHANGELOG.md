@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/humanwhocodes/safe-fetch/compare/safe-fetch-v1.0.1...safe-fetch-v1.1.0) (2025-11-12)
+
+
+### Features
+
+* Serialize errors as JSON in Response body ([#7](https://github.com/humanwhocodes/safe-fetch/issues/7)) ([a5b9b4b](https://github.com/humanwhocodes/safe-fetch/commit/a5b9b4b5a6718b1aac8b721ff5504f2bd0c906f0))
+
 ## [1.0.1](https://github.com/humanwhocodes/safe-fetch/compare/safe-fetch-v1.0.0...safe-fetch-v1.0.1) (2025-11-11)
 
 
