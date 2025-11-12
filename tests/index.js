@@ -126,6 +126,82 @@ describe("createSafeFetch", () => {
 		assert.strictEqual(response.status, 10001);
 		assert.strictEqual(response.statusText, errorMessage);
 	});
+
+	it("should serialize string errors as JSON in response body", async () => {
+		const errorMessage = "String error message";
+		const mockFetch = async () => {
+			throw errorMessage;
+		};
+		const safe = createSafeFetch(mockFetch);
+		const response = await safe("https://example.com");
+
+		const body = await response.json();
+
+		assert.deepStrictEqual(body, { message: errorMessage });
+	});
+
+	it("should serialize Error object properties as JSON in response body", async () => {
+		const errorMessage = "Network error occurred";
+		const mockFetch = async () => {
+			throw new Error(errorMessage);
+		};
+		const safe = createSafeFetch(mockFetch);
+		const response = await safe("https://example.com");
+
+		const body = await response.json();
+
+		assert.strictEqual(body.message, errorMessage);
+		assert.ok("stack" in body);
+	});
+
+	it("should serialize custom error object with additional properties", async () => {
+		const mockFetch = async () => {
+			const error = new Error("Custom error");
+			error.code = "ERR_CUSTOM";
+			error.statusCode = 500;
+			throw error;
+		};
+		const safe = createSafeFetch(mockFetch);
+		const response = await safe("https://example.com");
+
+		const body = await response.json();
+
+		assert.strictEqual(body.message, "Custom error");
+		assert.strictEqual(body.code, "ERR_CUSTOM");
+		assert.strictEqual(body.statusCode, 500);
+		assert.ok("stack" in body);
+	});
+
+	it("should serialize TypeError properties as JSON in response body", async () => {
+		const errorMessage = "Failed to fetch";
+		const mockFetch = async () => {
+			throw new TypeError(errorMessage);
+		};
+		const safe = createSafeFetch(mockFetch);
+		const response = await safe("https://example.com");
+
+		const body = await response.json();
+
+		assert.strictEqual(body.message, errorMessage);
+		assert.ok("stack" in body);
+	});
+
+	it("should serialize plain object errors as JSON in response body", async () => {
+		const errorObject = {
+			message: "Plain object error",
+			code: 123,
+			details: "Some details",
+		};
+		const mockFetch = async () => {
+			throw errorObject;
+		};
+		const safe = createSafeFetch(mockFetch);
+		const response = await safe("https://example.com");
+
+		const body = await response.json();
+
+		assert.deepStrictEqual(body, errorObject);
+	});
 });
 
 describe("safeFetch", () => {

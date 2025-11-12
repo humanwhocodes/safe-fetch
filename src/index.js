@@ -19,10 +19,28 @@ export const ERROR_STATUS = 10001;
 export function createSafeFetch(fetch) {
 	return (url, init) => {
 		return fetch(url, init).catch(error => {
+			// Serialize error to JSON
+			/** @type {Record<string, any>} */
+			let errorObject;
+
+			if (typeof error === "string") {
+				errorObject = { message: error };
+			} else {
+				// Extract all properties from the error object
+				errorObject = {};
+				const propertyNames = Object.getOwnPropertyNames(error);
+
+				for (const name of propertyNames) {
+					errorObject[name] = error[name];
+				}
+			}
+
+			const body = JSON.stringify(errorObject);
+
 			// Create a custom Response-like object since ERROR_STATUS is out of valid range
 			const statusText =
 				typeof error === "string" ? error : error.message;
-			const response = new Response(null, {
+			const response = new Response(body, {
 				status: 599,
 				statusText,
 			});
