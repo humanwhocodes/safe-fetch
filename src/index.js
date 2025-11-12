@@ -63,6 +63,9 @@ export function createSafeFetch(fetch) {
 			const response = new Response(body, {
 				status: 599,
 				statusText: errorMessage,
+				headers: {
+					"Content-Type": "application/json",
+				},
 			});
 
 			// Override the status property with a custom value

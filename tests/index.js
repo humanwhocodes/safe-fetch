@@ -236,6 +236,19 @@ describe("createSafeFetch", () => {
 		assert.strictEqual(body.normalProp, "value");
 		assert.ok(!("myFunction" in body));
 	});
+
+	it("should set Content-Type header to application/json", async () => {
+		const mockFetch = async () => {
+			throw new Error("Test error");
+		};
+		const safe = createSafeFetch(mockFetch);
+		const response = await safe("https://example.com");
+
+		assert.strictEqual(
+			response.headers.get("Content-Type"),
+			"application/json",
+		);
+	});
 });
 
 describe("safeFetch", () => {
