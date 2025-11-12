@@ -19,12 +19,53 @@ export const ERROR_STATUS = 10001;
 export function createSafeFetch(fetch) {
 	return (url, init) => {
 		return fetch(url, init).catch(error => {
+			// Serialize error to JSON
+			/** @type {Record<string, any>} */
+			let errorObject;
+			const errorMessage =
+				typeof error === "string" ? error : error.message || "Unknown error";
+
+			if (typeof error === "string") {
+				errorObject = { message: error };
+			} else {
+				// Extract all properties from the error object
+				errorObject = {};
+				const propertyNames = Object.getOwnPropertyNames(error);
+
+				for (const name of propertyNames) {
+					try {
+						const value = error[name];
+
+						// Skip functions and symbols as they can't be serialized
+						if (
+							typeof value !== "function" &&
+							typeof value !== "symbol"
+						) {
+							errorObject[name] = value;
+						}
+					} catch {
+						// Skip properties that throw on access
+					}
+				}
+			}
+
+			// Safely stringify with circular reference handling
+			let body;
+
+			try {
+				body = JSON.stringify(errorObject);
+			} catch {
+				// Fallback if serialization fails (e.g., circular references)
+				body = JSON.stringify({ message: errorMessage });
+			}
+
 			// Create a custom Response-like object since ERROR_STATUS is out of valid range
-			const statusText =
-				typeof error === "string" ? error : error.message;
-			const response = new Response(null, {
+			const response = new Response(body, {
 				status: 599,
-				statusText,
+				statusText: errorMessage,
+				headers: {
+					"Content-Type": "application/json",
+				},
 			});
 
 			// Override the status property with a custom value

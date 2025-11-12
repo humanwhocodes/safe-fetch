@@ -40,6 +40,11 @@ if (response.ok) {
 	// the ERROR_STATUS indicates it's a caught error
 	console.error("Error:", response.statusText);
 	// "This operation was aborted"
+
+	// You can also access the error details from the response body
+	const errorDetails = await response.json();
+	console.error("Error details:", errorDetails);
+	// { message: "This operation was aborted", stack: "..." }
 } else {
 	// Handle HTTP errors (non-2xx status codes)
 	console.error(`HTTP Error: ${response.status} ${response.statusText}`);
@@ -66,6 +71,10 @@ if (response.ok) {
 	console.log("Success!");
 } else if (response.status === ERROR_STATUS) {
 	console.error("Error:", response.statusText);
+
+	// Access detailed error information from the response body
+	const errorDetails = await response.json();
+	console.error("Error details:", errorDetails);
 } else {
 	// Handle HTTP errors (non-2xx status codes)
 	console.error(`HTTP Error: ${response.status} ${response.statusText}`);
@@ -87,6 +96,10 @@ if (response.ok) {
 	console.log(data);
 } else if (response.status === ERROR_STATUS) {
 	console.error("Error:", response.statusText);
+
+	// Get detailed error information from the response body
+	const errorDetails = await response.json();
+	console.error("Error details:", errorDetails);
 } else {
 	// Handle HTTP errors (non-2xx status codes)
 	console.error(`HTTP Error: ${response.status} ${response.statusText}`);
@@ -103,6 +116,55 @@ When a fetch operation fails (network error, abort signal, etc.), instead of rej
 
 - `status`: `ERROR_STATUS` (10001)
 - `statusText`: The error message
+- `body`: JSON-serialized error details
+
+### Error Body Serialization
+
+The error details are serialized as JSON in the response body, making it easy to access structured error information:
+
+- **String errors**: Serialized as `{ message: "error string" }`
+- **Error objects**: All properties (including `message`, `stack`, and custom properties) are extracted and serialized
+
+**Example with Error object:**
+
+```javascript
+import { safeFetch, ERROR_STATUS } from "@humanwhocodes/safe-fetch";
+
+const response = await safeFetch("https://invalid-domain.example");
+
+if (response.status === ERROR_STATUS) {
+	const error = await response.json();
+	console.log(error.message); // "Failed to fetch"
+	console.log(error.stack);   // Stack trace
+}
+```
+
+**Example with custom error properties:**
+
+```javascript
+const mockFetch = async () => {
+	const error = new Error("Database connection failed");
+	error.code = "DB_CONN_ERROR";
+	error.retryAfter = 5000;
+	throw error;
+};
+
+const safeMockFetch = createSafeFetch(mockFetch);
+const response = await safeMockFetch("https://api.example.com/data");
+
+if (response.status === ERROR_STATUS) {
+	const error = await response.json();
+	console.log(error.message);    // "Database connection failed"
+	console.log(error.code);       // "DB_CONN_ERROR"
+	console.log(error.retryAfter); // 5000
+}
+```
+
+**Safety features:**
+
+- Circular references are handled gracefully with a fallback to a simple message format
+- Non-serializable properties (functions, symbols) are automatically filtered out
+- Property access errors are caught and handled
 
 ## License
 
