@@ -33,13 +33,16 @@ const response = await safeFetch("https://api.example.com/data", {
 	signal: controller.signal,
 });
 
-// the ERROR_STATUS indicates it's a caught error
-if (response.status === ERROR_STATUS) {
+if (response.ok) {
+	const data = await response.json();
+	console.log(data);
+} else if (response.status === ERROR_STATUS) {
+	// the ERROR_STATUS indicates it's a caught error
 	console.error("Error:", response.statusText);
 	// "This operation was aborted"
 } else {
-	const data = await response.json();
-	console.log(data);
+	// Handle HTTP errors (non-2xx status codes)
+	console.error(`HTTP Error: ${response.status} ${response.statusText}`);
 }
 ```
 
@@ -59,10 +62,13 @@ const mySafeFetch = createSafeFetch(myFetch);
 
 const response = await mySafeFetch("https://api.example.com/data");
 
-if (response.status === ERROR_STATUS) {
+if (response.ok) {
+	console.log("Success!");
+} else if (response.status === ERROR_STATUS) {
 	console.error("Error:", response.statusText);
 } else {
-	console.log("Success!");
+	// Handle HTTP errors (non-2xx status codes)
+	console.error(`HTTP Error: ${response.status} ${response.statusText}`);
 }
 ```
 
@@ -75,8 +81,15 @@ import { safeFetch, ERROR_STATUS } from "@humanwhocodes/safe-fetch";
 
 const response = await safeFetch("https://api.example.com/data");
 
-if (response.status === ERROR_STATUS) {
+if (response.ok) {
+	// Handle successful response
+	const data = await response.json();
+	console.log(data);
+} else if (response.status === ERROR_STATUS) {
 	console.error("Error:", response.statusText);
+} else {
+	// Handle HTTP errors (non-2xx status codes)
+	console.error(`HTTP Error: ${response.status} ${response.statusText}`);
 }
 ```
 
