@@ -202,6 +202,40 @@ describe("createSafeFetch", () => {
 
 		assert.deepStrictEqual(body, errorObject);
 	});
+
+	it("should handle circular references in error objects", async () => {
+		const mockFetch = async () => {
+			const error = new Error("Circular reference error");
+			error.self = error; // Create circular reference
+			throw error;
+		};
+		const safe = createSafeFetch(mockFetch);
+		const response = await safe("https://example.com");
+
+		const body = await response.json();
+
+		// Should fallback to simple message format
+		assert.strictEqual(body.message, "Circular reference error");
+	});
+
+	it("should skip non-serializable properties like functions", async () => {
+		const mockFetch = async () => {
+			const error = new Error("Error with function");
+			error.myFunction = () => {
+				return "test";
+			};
+			error.normalProp = "value";
+			throw error;
+		};
+		const safe = createSafeFetch(mockFetch);
+		const response = await safe("https://example.com");
+
+		const body = await response.json();
+
+		assert.strictEqual(body.message, "Error with function");
+		assert.strictEqual(body.normalProp, "value");
+		assert.ok(!("myFunction" in body));
+	});
 });
 
 describe("safeFetch", () => {

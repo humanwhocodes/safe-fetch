@@ -31,11 +31,36 @@ export function createSafeFetch(fetch) {
 				const propertyNames = Object.getOwnPropertyNames(error);
 
 				for (const name of propertyNames) {
-					errorObject[name] = error[name];
+					try {
+						const value = error[name];
+
+						// Skip functions and symbols as they can't be serialized
+						if (
+							typeof value !== "function" &&
+							typeof value !== "symbol"
+						) {
+							errorObject[name] = value;
+						}
+					} catch {
+						// Skip properties that throw on access
+					}
 				}
 			}
 
-			const body = JSON.stringify(errorObject);
+			// Safely stringify with circular reference handling
+			let body;
+
+			try {
+				body = JSON.stringify(errorObject);
+			} catch {
+				// Fallback if serialization fails (e.g., circular references)
+				body = JSON.stringify({
+					message:
+						typeof error === "string"
+							? error
+							: error.message || "Unknown error",
+				});
+			}
 
 			// Create a custom Response-like object since ERROR_STATUS is out of valid range
 			const statusText =
